@@ -1,0 +1,29 @@
+name: Snackhub's shared build workflow
+
+on:
+  workflow_call:
+    inputs:
+      solution-name:
+        required: true
+        type: string
+        description: "Service solution's name(.sln file)!"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies ⇣
+        run: dotnet restore ${{inputs.solution-name}}
+
+      - name: Build 🛠️
+        run: dotnet build ${{inputs.solution-name}} --no-restore
+
+      - name: Test execution 🧪
+        run: dotnet test SnackHub.sln --no-build --verbosity normal

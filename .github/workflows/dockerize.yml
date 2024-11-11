@@ -1,0 +1,48 @@
+name: Snackhub's shared docker build and push workflow
+
+on:
+    workflow_call:
+      inputs:
+        solution-name:
+          required: true
+          type: string
+          description: "Service solution's name(.sln file)."
+        registry:
+          required: true
+          type: string
+          description: "Registry where should login and store new produced image. eg: ghcr.io"
+        image-name:
+            required: true
+            type: string
+            description: "Image that the image should receive, generally, repository/project. eg: team-one-pos-tech/snack-hub"
+        dockerfile-path:
+            required: true
+            type: string
+            description: "Path where we can find the dockerfile to be build. eg: ./src/SnackHub.Api/Dockerfile"
+        image-tag:
+            required: false
+            type: string
+            description: "Tag to be set at new generated image. Default: latest"
+            default: latest
+
+jobs:
+  create-and-publish-image:
+    name: "Create and Publish Docker Image"
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:     
+      - uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{inputs.registry}}
+          username: '${{github.actor}}'
+          password: '${{secrets.GITHUB_TOKEN}}'
+
+      - name: Build Image
+        run: docker build -t ${{inputs.registry}}/${{inputs.image-name}}:${{inputs.image-tag}} -f ${{inputs.dockerfile-path}} .
+      
+      - name: Push Image
+        run: docker push ${{inputs.registry}}/${{inputs.image-name}}:${{inputs.image-tag}}
+        
