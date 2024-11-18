@@ -33,6 +33,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: release-binaries
+          path: release/output
 
       - name: Creating generic dockerfile 🐳
         run: |
@@ -44,7 +45,7 @@ jobs:
 
           FROM base AS final
           WORKDIR /app
-          COPY --from=release-binaries /app/publish .
+          COPY --from=release/output /app/publish .
           ENTRYPOINT ["dotnet", "'${{inputs.api-entrypoint-binary}}'"]
           ' > Dockerfile
 
