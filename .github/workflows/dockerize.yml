@@ -45,7 +45,7 @@ jobs:
 
           FROM base AS final
           WORKDIR /app/${{inputs.image-name}}
-          COPY /release/output /app/${{inputs.image-name}}/ .
+          COPY /release/output /app/${{inputs.image-name}}/
           ENTRYPOINT ["dotnet", "'${{inputs.api-entrypoint-binary}}'"]
           ' > Dockerfile
 
