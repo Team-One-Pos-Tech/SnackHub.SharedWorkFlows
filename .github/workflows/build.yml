@@ -27,13 +27,13 @@ jobs:
         run: dotnet restore ${{inputs.solution-name}}
 
       - name: Publishing ⚙
-        run: dotnet publish src/${{inputs.api-project-name}}/${{inputs.api-project-name}}.csproj -c Release -o /app/publish
+        run: dotnet publish src/${{inputs.api-project-name}}/${{inputs.api-project-name}}.csproj -c Release -o release/output
 
       - name: Archive publish artifacts 📦
         uses: actions/upload-artifact@v4
         with:
           name: release-binaries
-          path: /app/publish
+          path: release/output
 
       - name: Test execution 🧪
         run: dotnet test ${{inputs.solution-name}} --verbosity minimal --collect:"Code Coverage;Format=cobertura" --results-directory "test-results" --logger "trx;LogFileName=test-results.trx"

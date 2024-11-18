@@ -3,14 +3,11 @@ name: Snackhub's shared docker build and push workflow
 on:
     workflow_call:
       inputs:
-        solution-name:
-          required: true
-          type: string
-          description: "Service solution's name(.sln file)."
         registry:
-          required: true
+          required: false
           type: string
           description: "Registry where should login and store new produced image. eg: ghcr.io"
+          default: ghcr.io
         image-name:
           required: true
           type: string
@@ -20,11 +17,6 @@ on:
           type: string
           description: "Tag to be set at new generated image. Default: latest"
           default: latest
-
-        dockerfile-path:
-          required: true
-          type: string
-          description: "Path where we can find the dockerfile to be build. eg: ./src/SnackHub.Api/Dockerfile"
 
         api-entrypoint-binary:
           required: true
@@ -56,6 +48,9 @@ jobs:
           ENTRYPOINT ["dotnet", "'${{inputs.api-entrypoint-binary}}'"]
           ' > Dockerfile
 
+      - name: why not ??
+        run: ls 
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -64,7 +59,7 @@ jobs:
           password: '${{secrets.GITHUB_TOKEN}}'
 
       - name: Build Image 📀
-        run: docker build -t ${{inputs.registry}}/${{inputs.image-name}}:${{inputs.image-tag}} -f ${{inputs.dockerfile-path}} .
+        run: docker build -t ${{inputs.registry}}/${{inputs.image-name}}:${{inputs.image-tag}} -f Dockerfile .
       
       - name: Push Image ☝️
         run: docker push ${{inputs.registry}}/${{inputs.image-name}}:${{inputs.image-tag}}
