@@ -7,6 +7,10 @@ on:
         required: true
         type: string
         description: "Service solution's name(.sln file)!"
+      api-project-name:
+        required: true
+        type: string
+        description: "Api project or runtime target project(eg: SnackHub.Api.csproj)"
 
 jobs:
   build:
@@ -22,14 +26,20 @@ jobs:
       - name: Restore dependencies ⇣
         run: dotnet restore ${{inputs.solution-name}}
 
-      - name: Build 🛠️
-        run: dotnet build ${{inputs.solution-name}} --no-restore
+      - name: Publishing ⚙
+        run: dotnet publish src/${{inputs.api-project-name}}/${{inputs.api-project-name}}.csproj -c Release -o /app/publish
+
+      - name: Archive publish artifacts 📦
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-binaries
+          path: /app/publish
 
       - name: Test execution 🧪
-        run: dotnet test ${{inputs.solution-name}} --no-build --verbosity minimal --collect:"Code Coverage;Format=cobertura" --results-directory "TestResults" --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test ${{inputs.solution-name}} --verbosity minimal --collect:"Code Coverage;Format=cobertura" --results-directory "test-results" --logger "trx;LogFileName=test-results.trx"
 
       - name: Archive test reports 📦
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: TestResults
+          path: test-results

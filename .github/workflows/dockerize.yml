@@ -12,37 +12,60 @@ on:
           type: string
           description: "Registry where should login and store new produced image. eg: ghcr.io"
         image-name:
-            required: true
-            type: string
-            description: "Image that the image should receive, generally, repository/project. eg: team-one-pos-tech/snack-hub"
-        dockerfile-path:
-            required: true
-            type: string
-            description: "Path where we can find the dockerfile to be build. eg: ./src/SnackHub.Api/Dockerfile"
+          required: true
+          type: string
+          description: "Image that the image should receive, generally, repository/project. eg: team-one-pos-tech/snack-hub"
         image-tag:
-            required: false
-            type: string
-            description: "Tag to be set at new generated image. Default: latest"
-            default: latest
+          required: false
+          type: string
+          description: "Tag to be set at new generated image. Default: latest"
+          default: latest
+
+        dockerfile-path:
+          required: true
+          type: string
+          description: "Path where we can find the dockerfile to be build. eg: ./src/SnackHub.Api/Dockerfile"
+
+        api-entrypoint-binary:
+          required: true
+          type: string
+          description: "Api project or runtime targer binary(eg: SnackHub.Api.dll)"
 
 jobs:
   create-and-publish-image:
     name: "Create and Publish Docker Image"
     permissions: write-all
     runs-on: ubuntu-latest
-    steps:     
-      - uses: actions/checkout@v4
+    steps:
+      - name: Download published artifacts from build stages 🚚
+        uses: actions/download-artifact@v4
+        with:
+          name: release-binaries
+
+      - name: Creating generic dockerfile 🐳
+        run: |
+          echo '
+          FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+          WORKDIR /app
+          EXPOSE 80
+          EXPOSE 443
+
+          FROM base AS final
+          WORKDIR /app
+          COPY --from=release-binaries /app/publish .
+          ENTRYPOINT ["dotnet", "'${{inputs.api-entrypoint-binary}}'"]
+          ' > Dockerfile
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ${{inputs.registry}}
           username: '${{github.actor}}'
           password: '${{secrets.GITHUB_TOKEN}}'
 
-      - name: Build Image
+      - name: Build Image 📀
         run: docker build -t ${{inputs.registry}}/${{inputs.image-name}}:${{inputs.image-tag}} -f ${{inputs.dockerfile-path}} .
       
-      - name: Push Image
+      - name: Push Image ☝️
         run: docker push ${{inputs.registry}}/${{inputs.image-name}}:${{inputs.image-tag}}
         
