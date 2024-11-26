@@ -1,4 +1,4 @@
-name: SonarScanner for .NET 9 with pull request decoration support
+name: Snackhub's shared SonarScanner for .NET
 
 on:
   workflow_call:
