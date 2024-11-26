@@ -17,6 +17,10 @@ on:
           type: string
           description: "Tag to be set at new generated image. Default: latest"
           default: latest
+        docker-base-image:
+          type: string
+          description: base image that wiil be use to create the docker container. 
+          default: mcr.microsoft.com/dotnet/aspnet:8.0
 
         api-entrypoint-binary:
           required: true
@@ -38,7 +42,7 @@ jobs:
       - name: Creating generic dockerfile 🐳
         run: |
           echo '
-          FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+          FROM ${{inputs.docker-base-image}} AS base
           WORKDIR /app
           EXPOSE 80
           EXPOSE 443
