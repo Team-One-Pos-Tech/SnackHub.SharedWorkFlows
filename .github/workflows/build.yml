@@ -11,11 +11,15 @@ on:
         required: true
         type: string
         description: "Api project or runtime target project(eg: SnackHub.Api.csproj)"
+      sonar-project-key:
+        required: true
+        type: string
+        description: "Project key configured at SonarCloud for the target project"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - uses: actions/checkout@v4
 
       - name: Setup .NET
@@ -35,11 +39,16 @@ jobs:
           name: release-binaries
           path: release/output
 
-      - name: Test execution 🧪
-        run: dotnet test ${{inputs.solution-name}} --verbosity minimal --collect:"Code Coverage;Format=cobertura" --results-directory "test-results" --logger "trx;LogFileName=test-results.trx"
+#      - name: Test execution 🧪
+#        run: dotnet test ${{inputs.solution-name}} --verbosity minimal --collect:"Code Coverage;Format=cobertura" --results-directory "test-results" --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Archive test reports 📦
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: test-results
+          
+  tests-and-quality:
+    uses: quality-gate.yml@main
+    with:
+      sonar-project-key: ${{inputs.sonar-project-key}}
