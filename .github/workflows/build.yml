@@ -49,6 +49,6 @@ jobs:
           path: test-results
           
   tests-and-quality:
-    uses: quality-gate.yml@main
+    uses: Team-One-Pos-Tech/SnackHub.SharedWorkFlows/.github/workflows/quality-gate.yml
     with:
       sonar-project-key: ${{inputs.sonar-project-key}}
