@@ -38,17 +38,28 @@ jobs:
         with:
           name: release-binaries
           path: release/output
-
-#      - name: Test execution 🧪
-#        run: dotnet test ${{inputs.solution-name}} --verbosity minimal --collect:"Code Coverage;Format=cobertura" --results-directory "test-results" --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      
+      #      - name: Test execution 🧪
+      #        run: dotnet test ${{inputs.solution-name}} --verbosity minimal --collect:"Code Coverage;Format=cobertura" --results-directory "test-results" --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Archive test reports 📦
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: test-results
-          
+  
   tests-and-quality:
-    uses: ./.github/workflows/quality-gate.yml
+    uses: highbyte/sonarscan-dotnet@v2.3.3
     with:
-      sonar-project-key: ${{inputs.sonar-project-key}}
+      sonarProjectKey: ${{inputs.sonar-project-key}}
+      sonarProjectName: ${{ inputs.sonar-project-name }}
+      sonarOrganization: ${{ github.repository_owner }}
+      dotnetTestArguments: >-
+        --logger trx --collect:"XPlat Code Coverage" --
+        DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      sonarBeginArguments: >-
+        /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
+        -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+    env:
+      SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
