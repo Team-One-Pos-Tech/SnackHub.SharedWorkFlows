@@ -36,7 +36,7 @@ jobs:
           path: release/output
 
       - name: Test execution 🧪
-        run: dotnet test ${{inputs.solution-name}} --verbosity minimal --collect:"Code Coverage;Format=cobertura" --results-directory "test-results" --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test ${{inputs.solution-name}} --verbosity minimal --collect:"Code Coverage;Format=cobertura" --results-directory "test-results" --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Archive test reports 📦
         uses: actions/upload-artifact@v4
