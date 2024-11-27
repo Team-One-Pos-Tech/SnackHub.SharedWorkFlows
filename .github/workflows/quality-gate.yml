@@ -15,17 +15,21 @@ on:
 
 jobs:
   sonarCloud:
-    uses: highbyte/sonarscan-dotnet@v2.3.3
-    with:
-      sonarProjectKey: ${{inputs.sonar-project-key}}
-      sonarProjectName: ${{ inputs.sonar-project-name }}
-      sonarOrganization: ${{ github.repository_owner }}
-      dotnetTestArguments: >-
-        --logger trx --collect:"XPlat Code Coverage" --
-        DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-      sonarBeginArguments: >-
-        /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
-        -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+    name: "Executes code quality validation at sonar cloud"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Sonar Scan - Test execution"
+        uses: highbyte/sonarscan-dotnet@v2.3.3
+        with:
+          sonarProjectKey: ${{inputs.sonar-project-key}}
+          sonarProjectName: ${{ inputs.sonar-project-name }}
+          sonarOrganization: ${{ github.repository_owner }}
+          dotnetTestArguments: >-
+            --logger trx --collect:"XPlat Code Coverage" --
+            DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          sonarBeginArguments: >-
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
+            -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 env:
   SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
   GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
