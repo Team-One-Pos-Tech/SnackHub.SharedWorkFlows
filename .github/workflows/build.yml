@@ -59,6 +59,8 @@ jobs:
     name: "Sonar code quality validation"
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        
       - name: "Sonar Scan - Test execution"
         uses: highbyte/sonarscan-dotnet@v2.3.3
         env:
