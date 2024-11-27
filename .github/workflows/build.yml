@@ -20,10 +20,11 @@ on:
         required: true
         type: string
         description: "Project key configured at SonarCloud for the target project"
-#      sonar-token:
-#        required: true
-#        type: string
-#        description: "Sonar secret token - will be at SONAR_TOKEN secret"
+    
+    secrets:
+      sonar-token:
+        required: true
+        description: "Sonar secret token - should be at SONAR_TOKEN secret"
 
 jobs:
   build:
