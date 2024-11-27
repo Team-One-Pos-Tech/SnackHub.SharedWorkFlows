@@ -46,8 +46,11 @@ jobs:
           path: test-results
   
   tests-and-quality:
+    name: "Sonar code quality validation"
+    runs-on: ubuntu-latest
     steps:
-      - uses: highbyte/sonarscan-dotnet@v2.3.3
+      - name: "Sonar Scan - Test execution"
+        uses: highbyte/sonarscan-dotnet@v2.3.3
         with:
           sonarProjectKey: ${{inputs.sonar-project-key}}
           sonarProjectName: ${{ inputs.sonar-project-name }}
@@ -58,6 +61,6 @@ jobs:
           sonarBeginArguments: >-
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
             -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
-    env:
-      SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
-      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+env:
+  SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
+  GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
