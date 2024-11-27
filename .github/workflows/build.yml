@@ -20,6 +20,10 @@ on:
         required: true
         type: string
         description: "Project key configured at SonarCloud for the target project"
+#      sonar-token:
+#        required: true
+#        type: string
+#        description: "Sonar secret token - will be at SONAR_TOKEN secret"
 
 jobs:
   build:
@@ -57,8 +61,8 @@ jobs:
       - name: "Sonar Scan - Test execution"
         uses: highbyte/sonarscan-dotnet@v2.3.3
         env:
-          SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          SONAR_TOKEN: ${{ secrets.sonar-token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           sonarProjectKey: ${{inputs.sonar-project-key}}
           sonarProjectName: ${{ inputs.sonar-project-name }}
