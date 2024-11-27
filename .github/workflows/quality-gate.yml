@@ -15,7 +15,7 @@ on:
 
 jobs:
   sonarCloud:
-    name: "Executes code quality validation at sonar cloud"
+    name: "Sonar code quality validation"
     runs-on: ubuntu-latest
     steps:
       - name: "Sonar Scan - Test execution"
