@@ -11,6 +11,11 @@ on:
         required: true
         type: string
         description: "Api project or runtime target project(eg: SnackHub.Api.csproj)"
+      sonar-project-name:
+        required: false
+        type: string
+        description: "Project name configured at SonarCloud for the target project - By default it will use the repository name"
+        default: ${{ github.repository }}
       sonar-project-key:
         required: true
         type: string
@@ -50,9 +55,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Sonar Scan - Test execution"
-        uses: ./.github/workflows/quality-gate.yml
+        uses: highbyte/sonarscan-dotnet@v2.3.3
         with:
-            sonar-project-key: ${{inputs.sonar-project-key}}
+          sonarProjectKey: ${{inputs.sonar-project-key}}
+          sonarProjectName: ${{ inputs.sonar-project-name }}
+          sonarOrganization: ${{ github.repository_owner }}
+          dotnetTestArguments: >-
+            --logger trx --collect:"XPlat Code Coverage" --
+            DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          sonarBeginArguments: >-
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
+            -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 env:
   SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
   GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
