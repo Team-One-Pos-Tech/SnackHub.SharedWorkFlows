@@ -71,7 +71,7 @@ jobs:
           sonarProjectName: ${{ inputs.sonar-project-name }}
           sonarOrganization: "team-one-pos-tech"
           dotnetTestArguments: >-
-            --logger trx --collect:"XPlat Code Coverage" --
+            ${{inputs.solution-name}} --logger trx --collect:"XPlat Code Coverage" --
             DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           sonarBeginArguments: >-
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
