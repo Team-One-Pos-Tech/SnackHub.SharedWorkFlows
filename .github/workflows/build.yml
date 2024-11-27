@@ -67,7 +67,7 @@ jobs:
         with:
           sonarProjectKey: ${{inputs.sonar-project-key}}
           sonarProjectName: ${{ inputs.sonar-project-name }}
-          sonarOrganization: ${{ github.repository_owner }}
+          sonarOrganization: "team-one-pos-tech"
           dotnetTestArguments: >-
             --logger trx --collect:"XPlat Code Coverage" --
             DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
