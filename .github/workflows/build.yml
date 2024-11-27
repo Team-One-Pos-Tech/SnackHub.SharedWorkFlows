@@ -50,17 +50,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Sonar Scan - Test execution"
-        uses: highbyte/sonarscan-dotnet@v2.3.3
+        uses: ./.github/workflows/quality-gate.yml
         with:
-          sonarProjectKey: ${{inputs.sonar-project-key}}
-          sonarProjectName: ${{ inputs.sonar-project-name }}
-          sonarOrganization: ${{ github.repository_owner }}
-          dotnetTestArguments: >-
-            --logger trx --collect:"XPlat Code Coverage" --
-            DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-          sonarBeginArguments: >-
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
-            -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+            sonar-project-key: ${{inputs.sonar-project-key}}
 env:
   SONAR_TOKEN: '${{ secrets.SONAR_TOKEN }}'
   GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
